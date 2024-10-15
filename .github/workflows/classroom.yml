@@ -1,0 +1,72 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: ten
+      id: ten
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: ten
+        setup-command: ''
+        command: python main.py
+        input: '10'
+        expected-output: '3628800'
+        comparison-method: regex
+        timeout: 10
+        max-score: 5
+    - name: three
+      id: three
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: three
+        setup-command: ''
+        command: python main.py
+        input: '3'
+        expected-output: '6'
+        comparison-method: regex
+        timeout: 10
+        max-score: 5
+    - name: BaseCase
+      id: basecase
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: BaseCase
+        setup-command: ''
+        command: python main.py
+        input: '1'
+        expected-output: '1'
+        comparison-method: regex
+        timeout: 10
+        max-score: 5
+    - name: Example
+      id: example
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Example
+        setup-command: ''
+        command: python main.py
+        input: '5'
+        expected-output: '120'
+        comparison-method: regex
+        timeout: 10
+        max-score: 5
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEN_RESULTS: "${{steps.ten.outputs.result}}"
+        THREE_RESULTS: "${{steps.three.outputs.result}}"
+        BASECASE_RESULTS: "${{steps.basecase.outputs.result}}"
+        EXAMPLE_RESULTS: "${{steps.example.outputs.result}}"
+      with:
+        runners: ten,three,basecase,example
