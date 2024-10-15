@@ -9,5 +9,5 @@ def factorial(n):
         return x * factorial(x-1)
 
 # testing
-num = 5
+num = input("")
 print(factorial(num))
